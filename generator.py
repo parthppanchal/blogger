@@ -1,4 +1,5 @@
 import os
+import collections
 
 from flask import Flask, render_template, url_for, abort
 from werkzeug import cached_property
@@ -7,12 +8,52 @@ import yaml
 
 POSTS_FILE_EXTENSION = '.md'
 
+class SortedDict(collections.MutableMapping):
+    def __init__(self, items=None, key=None, reverse=False):
+        self._items = {}
+        self._keys = []
+        if key:
+            self._key_fn = lambda k: key(self._items[k])
+        else:
+            self._key_fn = lambda k: self._items[k]
+        self._reverse = reverse
+
+        if items is not None:
+            self.update(items)
+
+    def __getitem__(self, key):
+        return self._items[key]
+
+    def __setitem__(self, key, value):
+        self._items[key] = value
+        if key not in self._keys:
+            self._keys.append(key)
+            self._keys.sort(key=self._key_fn, reverse=self._reverse)
+
+    def __delitem__(self, key):
+        self._items.pop(key)
+        self._keys.remove(key)
+
+    def __len__(self):
+        return len(self._keys)
+
+    def __iter__(self):
+        for key in self._keys:
+            yield key
+
+    def __repr__(self):
+        sorted_dict = '{'
+        for key in self._keys:
+            sorted_dict += '%s: %s, ' % (key, self._items[key])
+        sorted_dict = sorted_dict[:-2] + '}'
+        return '%s(%s)' % (self.__class__.__name__, sorted_dict)
+
 class Blog(object):
     def __init__(self, app, root_dir='', file_ext=POSTS_FILE_EXTENSION):
         self.root_dir = root_dir
         self.file_ext = file_ext
         self._app = app
-        self._cache = {}
+        self._cache = SortedDict(key=lambda p: p.date, reverse=True)
         self._initialize_cache()
 
     @property
