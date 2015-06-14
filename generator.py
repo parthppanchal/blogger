@@ -107,7 +107,7 @@ class Post(object):
         self.__dict__.update(yaml.load(content))
 
 app = Flask(__name__)
-app.config.from_pyfile('settings.py')
+app.config.from_envvar('SETTINGS_FILE')
 blog = Blog(app, root_dir='posts')
 freezer = Freezer(app)
 
