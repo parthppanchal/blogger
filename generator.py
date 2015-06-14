@@ -10,7 +10,9 @@ from werkzeug.contrib.atom import AtomFeed
 import markdown
 import yaml
 
-POSTS_FILE_EXTENSION = '.md'
+class Config(object):
+    DEBUG = True
+    POSTS_FILE_EXTENSION = '.md'
 
 class SortedDict(collections.MutableMapping):
     def __init__(self, items=None, key=None, reverse=False):
@@ -53,9 +55,9 @@ class SortedDict(collections.MutableMapping):
         return '%s(%s)' % (self.__class__.__name__, sorted_dict)
 
 class Blog(object):
-    def __init__(self, app, root_dir='', file_ext=POSTS_FILE_EXTENSION):
+    def __init__(self, app, root_dir='', file_ext=None):
         self.root_dir = root_dir
-        self.file_ext = file_ext
+        self.file_ext = file_ext if file_ext is not None else app.config['POSTS_FILE_EXTENSION']
         self._app = app
         self._cache = SortedDict(key=lambda p: p.date, reverse=True)
         self._initialize_cache()
@@ -109,6 +111,7 @@ class Post(object):
         self.__dict__.update(yaml.load(content))
 
 app = Flask(__name__)
+app.config.from_object(Config)
 blog = Blog(app, root_dir='posts')
 freezer = Freezer(app)
 
@@ -149,4 +152,4 @@ if __name__ == '__main__':
         freezer.freeze()
     else:
         post_files = [post.filepath for post in blog.posts]
-        app.run(port=8000, debug=True, extra_files=post_files)
+        app.run(port=8000, extra_files=post_files)
