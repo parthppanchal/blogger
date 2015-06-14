@@ -8,10 +8,10 @@
   <generator>Werkzeug</generator>
   <entry xml:base="http://localhost/feed.atom">
     <title type="text">Hello, World!</title>
-    <id>http://localhost/blog/hello.html</id>
+    <id>http://localhost/blog/hello/</id>
     <updated>2015-06-14T00:00:00Z</updated>
     <published>2015-06-14T00:00:00Z</published>
-    <link href="http://localhost/blog/hello.html" />
+    <link href="http://localhost/blog/hello/" />
     <author>
       <name>Parth P Panchal</name>
     </author>
@@ -20,10 +20,10 @@
   </entry>
   <entry xml:base="http://localhost/feed.atom">
     <title type="text">The World is Calling</title>
-    <id>http://localhost/blog/world.html</id>
+    <id>http://localhost/blog/world/</id>
     <updated>2015-06-14T00:00:00Z</updated>
     <published>2015-06-14T00:00:00Z</published>
-    <link href="http://localhost/blog/world.html" />
+    <link href="http://localhost/blog/world/" />
     <author>
       <name>Parth P Panchal</name>
     </author>

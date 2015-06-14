@@ -120,7 +120,7 @@ def format_date(value, format='%B %d, %Y'):
 def index():
     return render_template('index.html', posts=blog.posts)
 
-@app.route('/blog/<path:path>.html')
+@app.route('/blog/<path:path>/')
 def post(path):
     post = blog.get_post_or_404(path)
     return render_template('post.html', post=post)
