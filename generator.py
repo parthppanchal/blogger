@@ -10,7 +10,6 @@ from werkzeug.contrib.atom import AtomFeed
 import markdown
 import yaml
 
-DEBUG = True
 POSTS_FILE_EXTENSION = '.md'
 
 class SortedDict(collections.MutableMapping):
@@ -63,7 +62,10 @@ class Blog(object):
 
     @property
     def posts(self):
-        return self._cache.values()
+        if self._app.debug:
+            return self._cache.values()
+        else:
+            return [post for post in self._cache.values() if post.published]
 
     def get_post_or_404(self, path):
         """Returns the Post object for the given path or raises a NotFound exception
@@ -88,6 +90,7 @@ class Post(object):
     def __init__(self, path, root_dir=''):
         self.urlpath = os.path.splitext(path.strip('/'))[0]
         self.filepath = os.path.join(root_dir, path.strip('/'))
+        self.published = False
         self._initialize_metadata()
 
     @cached_property
@@ -151,4 +154,4 @@ if __name__ == '__main__':
         freezer.freeze()
     else:
         post_files = [post.filepath for post in blog.posts]
-        app.run(port=8000, extra_files=post_files)
+        app.run(port=8000, debug=True, extra_files=post_files)
