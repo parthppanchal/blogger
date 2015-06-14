@@ -32,6 +32,10 @@ class Post(object):
 def format_date(value, format='%B %d, %Y'):
     return value.strftime(format)
 
+@app.context_processor
+def inject_format_date():
+    return {'format_date': format_date}
+
 @app.route('/')
 def index():
     return 'Hello, World!'
@@ -40,7 +44,7 @@ def index():
 def post(path):
     path = os.path.join('posts', path + POSTS_FILE_EXTENSION)
     post = Post(path)
-    return render_template('post.html', post=post, format_date=format_date)
+    return render_template('post.html', post=post)
 
 if __name__ == '__main__':
     app.run(port=8000, debug=True)
