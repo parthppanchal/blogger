@@ -31,10 +31,7 @@ class Post(object):
 
 def format_date(value, format='%B %d, %Y'):
     return value.strftime(format)
-
-@app.context_processor
-def inject_format_date():
-    return {'format_date': format_date}
+app.jinja_env.filters['date'] = format_date
 
 @app.route('/')
 def index():
