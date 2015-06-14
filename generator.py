@@ -10,10 +10,6 @@ from werkzeug.contrib.atom import AtomFeed
 import markdown
 import yaml
 
-class Config(object):
-    DEBUG = True
-    POSTS_FILE_EXTENSION = '.md'
-
 class SortedDict(collections.MutableMapping):
     def __init__(self, items=None, key=None, reverse=False):
         self._items = {}
@@ -111,7 +107,7 @@ class Post(object):
         self.__dict__.update(yaml.load(content))
 
 app = Flask(__name__)
-app.config.from_object(Config)
+app.config.from_pyfile('settings.py')
 blog = Blog(app, root_dir='posts')
 freezer = Freezer(app)
 
