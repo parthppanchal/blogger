@@ -1,2 +1,0 @@
-DEBUG = True
-POSTS_FILE_EXTENSION = '.md'
