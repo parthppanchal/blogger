@@ -10,6 +10,7 @@ from werkzeug.contrib.atom import AtomFeed
 import markdown
 import yaml
 
+FREEZER_BASE_URL = 'http://parthppanchal.github.io/blogger'
 POSTS_FILE_EXTENSION = '.md'
 
 class SortedDict(collections.MutableMapping):
