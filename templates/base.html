@@ -3,6 +3,8 @@
   {% block head %}
     <title>My Awesome Blog</title>
   {% endblock head %}
+  <!-- Stylesheets -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/base.css') }}" />
 </head>
 <body>
   {% block content %}{% endblock content %}
