@@ -3,12 +3,18 @@ import sys
 import collections
 from datetime import datetime
 
+from boto import connect_s3
+from boto.s3.key import Key
 from flask import Flask, render_template, url_for, abort, request
 from flask.ext.frozen import Freezer
 from werkzeug import cached_property
 from werkzeug.contrib.atom import AtomFeed
 import markdown
 import yaml
+
+# AWS Access Credentials
+AWS_ACCESS_KEY_ID = '<Access Key ID>'
+AWS_SECRET_ACCESS_KEY = '<Secret Access Key>'
 
 FREEZER_BASE_URL = 'http://parthppanchal.github.io/blogger'
 POSTS_FILE_EXTENSION = '.md'
@@ -150,9 +156,24 @@ def recent_feed():
                  published=post_date)
     return feed.get_response()
 
+def deploy(root_dir):
+    conn = connect_s3(AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY)
+    bucket = conn.get_bucket(FREEZER_BASE_URL)
+    for (root, dirpaths, filepaths) in os.walk(root_dir):
+        for filepath in filepaths:
+            filename = os.path.join(root, filepath)
+            name = filename.replace(root_dir, '', 1)[1:]
+            key = Key(bucket, name)
+            key.set_contents_from_filename(filename)
+    print('Site is now up on %s' % bucket.get_website_endpoint())
+
 if __name__ == '__main__':
-    if len(sys.argv) > 1 and sys.argv[1] == 'build':
-        freezer.freeze()
+    if len(sys.argv) > 1:
+        if sys.argv[1] == 'build':
+            freezer.freeze()
+        elif sys.argv[1] == 'deploy':
+            freezer.freeze()
+            deploy('build')
     else:
         post_files = [post.filepath for post in blog.posts]
         app.run(port=8000, debug=True, extra_files=post_files)
